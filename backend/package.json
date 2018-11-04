@@ -1,0 +1,20 @@
+{
+  "name": "recipique-backend",
+  "version": "1.0.0",
+  "description": "GraphQL and auth for recipique",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "api": "node src/api.js"
+  },
+  "author": "Cameron Gorrie <sastraxi@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.1.0",
+    "eslint": "^5.8.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "graphql": "^14.0.2"
+  }
+}
