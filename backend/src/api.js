@@ -29,12 +29,14 @@ const typeDefs = gql`
   # (A "Mutation" type will be covered later on.)
   type Query {
     recipes: [Recipe!]
+    recipeById(id: Int!): Recipe
   }
 `;
 
 const resolvers = {
   Query: {
     recipes: () => recipes,
+    recipeById: (ctx, { id }) => recipes.find(r => r.id === id),
   },
 };
 
