@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const recipes = require('./testdata/recipes');
+const Symbol = require('./util/symbol');
 
 // Type definitions define the "shape" of your data and specify
 // which ways the data can be fetched from the GraphQL server.
@@ -33,10 +34,26 @@ const typeDefs = gql`
   }
 `;
 
+const stepMapper = ({ local, optional, ...step }) => ({
+  ...step,
+  optional: optional || false,
+  local: local && local.map(({ key, value }) => ({
+    key,
+    value: Symbol.format(Symbol.parse(value)),
+  })),
+});
+
+const recipeMapper = ({ steps, ...recipe }) => {
+  return {
+    ...recipe,
+    steps: steps.map(stepMapper),
+  };
+};
+
 const resolvers = {
   Query: {
-    recipes: () => recipes,
-    recipeById: (ctx, { id }) => recipes.find(r => r.id === id),
+    recipes: () => recipes.map(recipeMapper),
+    recipeById: (ctx, { id }) => recipeMapper(recipes.find(r => r.id === id)),
   },
 };
 
