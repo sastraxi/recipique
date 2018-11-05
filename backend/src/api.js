@@ -39,21 +39,22 @@ const stepMapper = ({ local, optional, ...step }) => ({
   optional: optional || false,
   local: local && local.map(({ key, value }) => ({
     key,
-    value: Symbol.format(Symbol.parse(value)),
+    value: Symbol.parse(value).format(),
   })),
 });
 
-const recipeMapper = ({ steps, ...recipe }) => {
-  return {
-    ...recipe,
-    steps: steps.map(stepMapper),
-  };
-};
+const recipeMapper = ({ steps, ...recipe }) => ({
+  ...recipe,
+  steps: steps.map(stepMapper),
+});
 
 const resolvers = {
   Query: {
     recipes: () => recipes.map(recipeMapper),
-    recipeById: (ctx, { id }) => recipeMapper(recipes.find(r => r.id === id)),
+    recipeById: (ctx, { id }) => {
+      const recipe = recipes.find(r => r.id === id);
+      return recipe && recipeMapper(recipe);
+    },
   },
 };
 

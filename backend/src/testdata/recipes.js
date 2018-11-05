@@ -1,6 +1,6 @@
 const recipes = [
   {
-    id: 0,
+    id: 1,
     name: 'Peanut butter and jelly sandwich',
     url: 'http://127.0.0.1/hacked',
     servesFrom: 1,

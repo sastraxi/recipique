@@ -14,38 +14,68 @@ const fixUnit = unit => (unit in UNIT_OVERRIDES ? UNIT_OVERRIDES[unit] : unit);
 // TODO: how can we add overrides?
 //  -> "butter, peanut" => "peanut butter"
 //  -> "bread, sliced" => "slice(s) of bread"
-// TODO: this should be its own Class
 
-module.exports = {
-  fixUnit,
-  parse: (symbol) => {
-    const match = symbol.match(SYMBOL_REGEX);
+class Symbol {
+  constructor(item, quantity, category, parsedQuantity) {
+    this.item = item;
+    this.quantity = quantity;
+    this.category = category;
+    this.parsedQuantity = parsedQuantity;
+
+    // TODO: how to parse a quantity like "3 medium"??
+    if (!this.parsedQuantity) {
+      const quantityMatch = this.quantity.match(QUANTITY_REGEX);
+      this.parsedQuantity = undefined;
+      try {
+        this.parsedQuantity = quantityMatch
+          ? convert(quantityMatch[1]).from(fixUnit(quantityMatch[2]))
+          : undefined;
+      } catch (err) {
+        // could not parse quantity; silently set to undefined
+      }
+    }
+  }
+
+  static clone() {
+    return new Symbol(this.item, this.quantity, this.category, this.parsedQuantity);
+  }
+
+  static parse(stringifed) {
+    const match = stringifed.match(SYMBOL_REGEX);
+
     const category = match[1] && match[1].substr(0, match[1].length - 1);
-    const item = match[2];
+    const item = match[2]; // eslint-disable-line
     const quantity = match[3].substr(1);
 
-    const quantityMatch = quantity.match(QUANTITY_REGEX);
-    let parsedQuantity;
-    try {
-      parsedQuantity = quantityMatch
-        ? convert(quantityMatch[1]).from(fixUnit(quantityMatch[2]))
-        : undefined;
-    } catch (err) {
-      // could not parse quantity; silently set to undefined
-    }
+    return new Symbol(item, quantity, category);
+  }
 
+  quantityIn(unit, precision = 3) {
+    return this.parsedQuantity && unit
+      ? `${this.parsedQuantity.to(fixUnit(unit)).toPrecision(precision)}${unit}`
+      : this.quantity;
+  }
+
+  withUnits(unit, precision) {
+    return new Symbol(
+      this.item,
+      this.quantityIn(unit, precision),
+      this.category,
+      this.parsedQuantity,
+    );
+  }
+
+  format(unit, precision) {
+    return `${this.quantityIn(unit, precision)} ${(this.category ? `${this.category}, ` : '')}${this.item}`;
+  }
+
+  asObject() {
     return {
-      category,
-      item,
-      quantity,
-      parsedQuantity,
+      category: this.category,
+      item: this.item,
+      quantity: this.quantity,
     };
-    // TODO: how to parse a quantity like "3 medium"??
-  },
-  format: (symbol, unit, precision = 3) => {
-    const quantity = symbol.parsedQuantity && unit
-      ? `${symbol.parsedQuantity.to(fixUnit(unit)).toPrecision(precision)}${unit}`
-      : symbol.quantity;
-    return `${quantity} ${(symbol.category ? `${symbol.category}, ` : '')}${symbol.item}`;
-  },
-};
+  }
+}
+
+module.exports = Symbol;

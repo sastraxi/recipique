@@ -1,8 +1,8 @@
 const Symbol = require('./util/symbol');
 
-const checkSymbol = (symbol, units) => {
+const checkSymbol = (symbol, units, precision = 3) => {
   const parsed = Symbol.parse(symbol);
-  console.log(`${symbol} => ${Symbol.format(parsed)}`);
+  console.log(`${symbol} => ${parsed.format(units, precision)}`);
 };
 
 checkSymbol('onions:diced@1 medium');
