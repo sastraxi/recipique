@@ -8,10 +8,7 @@ const recipes = [
     provides: ['sandwich@1'],
     steps: [
       {
-        text: 'Cut the crust off of the bread',
-        optional: true,
-      },
-      {
+        ordinal: 1,
         text: 'Spread $0 on $1',
         local: [
           { key: '0', value: 'butter:peanut@2tbsp' },
@@ -19,11 +16,16 @@ const recipes = [
         ],
       },
       {
+        ordinal: 2,
         text: 'Spread $0 on $1',
         local: [
           { key: '0', value: 'jam:strawberry@1tbsp' },
           { key: '1', value: 'bread:sliced@1' },
         ],
+      },
+      {
+        text: 'Cut the crust off of the bread',
+        optional: true,
       },
     ],
   },

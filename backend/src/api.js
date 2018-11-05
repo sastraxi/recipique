@@ -14,9 +14,11 @@ const typeDefs = gql`
     text: String!
     local: [KeyValue!]
     optional: Boolean 
+    ordinal: Int
   }
 
   type Recipe {
+    id: Int!
     name: String!
     author: String!
     url: String
@@ -61,7 +63,7 @@ const resolvers = {
 // In the most basic sense, the ApolloServer can be started
 // by passing type definitions (typeDefs) and the resolvers
 // responsible for fetching the data for those types.
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs, resolvers, cors: true });
 
 // This `listen` method launches a web-server.  Existing apps
 // can utilize middleware options, which we'll discuss later.
