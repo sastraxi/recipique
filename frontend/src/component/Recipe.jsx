@@ -1,7 +1,7 @@
 import React from 'react';
-import gql from 'graphql-tag';
 
-import client from 'util/apollo';
+import { query } from 'util/apollo';
+import recipeById from 'query/recipeById';
 
 import LoadingIndicator from 'view/LoadingIndicator';
 import RecipeStep from 'view/RecipeStep';
@@ -16,29 +16,7 @@ class Recipe extends React.Component {
   };
 
   async componentDidMount() {
-    const response = await client.query({
-      query: gql`
-        query($id: Int!) {
-          recipeById(id: $id) {
-            name
-            servesFrom
-            servesTo
-            steps {
-              ordinal
-              text
-              optional
-              local {
-                key
-                value
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        id: +this.props.match.params.id,
-      }
-    });
+    const response = await query(recipeById, { id: +this.props.match.params.id });
     if (response.data) {
       const { recipeById } = response.data;
       this.setState({ recipe: recipeById });

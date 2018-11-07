@@ -25,7 +25,6 @@ const Item = styled.div`
     border-top: 1px dashed ${BORDER_COLOUR};
     margin-top: 1em;
   }
-
 `;
 
 export default (props) => {
