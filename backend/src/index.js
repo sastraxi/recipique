@@ -5,8 +5,9 @@ const checkSymbol = (symbol, units, precision = 3) => {
   console.log(`${symbol} => ${parsed.format(units, precision)}`);
 };
 
-checkSymbol('onions:diced@1 medium');
-checkSymbol('sea salt@pinch', 'g');
-checkSymbol('tomato paste@1tbsp', 'ml');
+checkSymbol('onion:diced@1 medium');
+checkSymbol('salt:sea@pinch', 'g');
+checkSymbol('tomato:paste@1tbsp', 'ml');
+checkSymbol('tomato:crushed@1cup', 'ml');
 
 process.exit(0);

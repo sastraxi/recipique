@@ -1,6 +1,6 @@
 const convert = require('convert-units');
 
-const QUANTITY_REGEX = /^(\d+)(\D+)$/;
+const QUANTITY_REGEX = /^(\d+)\W*([^0-9\W]+)$/;
 const SYMBOL_REGEX = /^([^@:]+:)?([^@:]+)(@[^@:]+)?$/;
 
 const UNIT_OVERRIDES = {
@@ -8,8 +8,42 @@ const UNIT_OVERRIDES = {
   tbsp: 'Tbs',
   tbs: 'Tbs',
 };
-
 const fixUnit = unit => (unit in UNIT_OVERRIDES ? UNIT_OVERRIDES[unit] : unit);
+
+const QUANTITY_OVERRIDES = {
+  pinch: 'a pinch of',
+};
+const formatQuantity = quantity => QUANTITY_OVERRIDES[quantity] || quantity;
+
+const ITEM_OVERRIDES = {};
+const CATEGORY_OVERRIDES = {
+  tomato: {
+    paste: 'tomato paste',
+    crushed: 'crushed tomatoes',
+  },
+  butter: {
+    peanut: 'peanut butter',
+  },
+  jam: {
+    strawberry: 'strawberry jam',
+  },
+  bread: {
+    sliced: 'slice(s) of bread',
+  },
+  onion: {
+    caramelized: 'caramelized onions',
+  },
+  salt: {
+    sea: 'sea salt',
+  },
+};
+const formatName = (item, category) => {
+  if (category) {
+    const overrides = CATEGORY_OVERRIDES[category] || {};
+    return overrides[item] || `${category}, ${item}`;
+  }
+  return ITEM_OVERRIDES[item] || item;
+};
 
 // TODO: how can we add overrides?
 //  -> "butter, peanut" => "peanut butter"
@@ -32,6 +66,7 @@ class Symbol {
           : undefined;
       } catch (err) {
         // could not parse quantity; silently set to undefined
+        // console.warn(err);
       }
     }
   }
@@ -66,7 +101,7 @@ class Symbol {
   }
 
   format(unit, precision) {
-    return `${this.quantityIn(unit, precision)} ${(this.category ? `${this.category}, ` : '')}${this.item}`;
+    return `${formatQuantity(this.quantityIn(unit, precision))} ${formatName(this.item, this.category)}`;
   }
 
   asObject() {
